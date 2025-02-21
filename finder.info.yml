@@ -1,12 +1,29 @@
 name: Finder
-description: Creates a page showing the Resource Finder.
+description: 'Help users choose among a number of similar related alternatives.'
 package: Custom
 
 type: module
 core: 8.x
 core_version_requirement: ^8 || ^9 || ^10
 dependencies:
+  - drupal:hal
+  - drupal:rest
+  - drupal:serialization
+  - drupal:taxonomy
   - paragraphs:paragraphs
+  - drupal:default_content
 libraries:
   - finder/finder
 configure: finder.settings
+
+default_content:
+  config:
+    - taxonomy.vocabulary.control_type
+    - rest.resource.entity.taxonomy_term
+  taxonomy_term:
+    - control_type
+  config_post:
+    - field.storage.taxonomy_term.field_control_type
+    - taxonomy.vocabulary.facets
+  taxonomy_term_post:
+    - facets

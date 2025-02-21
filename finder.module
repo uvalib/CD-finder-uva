@@ -54,3 +54,13 @@ function finder_menu() {
   return $items;
 
 }
+
+/**
+ * Implements hook_modules_installed().
+ */
+function finder_modules_installed($modules) {
+  if (in_array('default_content', $modules)) {
+    // Ensure all config is imported and caches cleared before default_content runs
+    drupal_flush_all_caches();
+  }
+}

@@ -1,0 +1,70 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the finder module.
+ */
+
+use Drupal\rest\Entity\RestResourceConfig;
+use Drupal\taxonomy\Entity\Vocabulary;
+
+/**
+ * Implements hook_install().
+ */
+function finder_install() {
+  // Ensure module dependencies are installed first
+  \Drupal::service('module_installer')->install(['hal', 'serialization', 'rest', 'taxonomy']);
+  
+  // Create both required vocabularies if they don't exist
+  $vocabularies = [
+    'control_type' => [
+      'name' => 'Control Type',
+      'description' => 'Controls how facet choices can be selected',
+    ],
+    'facets' => [
+      'name' => 'Facets',
+      'description' => 'Facets for the Digital Storage Finder',
+    ],
+  ];
+
+  foreach ($vocabularies as $vid => $vocab_data) {
+    $vocabulary = \Drupal::entityTypeManager()
+      ->getStorage('taxonomy_vocabulary')
+      ->loadByProperties(['vid' => $vid]);
+      
+    if (empty($vocabulary)) {
+      $vocabulary = Vocabulary::create([
+        'vid' => $vid,
+        'name' => $vocab_data['name'],
+        'description' => $vocab_data['description'],
+      ]);
+      $vocabulary->save();
+    }
+  }
+
+  // Configure REST resources
+  $rest_resources = ['entity.taxonomy_term'];
+  foreach ($rest_resources as $resource_id) {
+    $existing_config = \Drupal::entityTypeManager()
+      ->getStorage('rest_resource_config')
+      ->loadByProperties(['id' => $resource_id]);
+      
+    if (empty($existing_config)) {
+      $config = RestResourceConfig::create([
+        'id' => $resource_id,
+        'plugin_id' => $resource_id,
+        'granularity' => 'resource',
+        'configuration' => [
+          'methods' => ['GET', 'POST', 'PATCH', 'DELETE'],
+          'formats' => ['hal_json'],
+          'authentication' => ['cookie'],
+        ],
+      ]);
+      $config->save();
+    }
+  }
+
+  // Clear caches to ensure all entity definitions are updated
+  \Drupal::service('entity_type.manager')->clearCachedDefinitions();
+  drupal_flush_all_caches();
+}

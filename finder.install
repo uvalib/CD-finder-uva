@@ -1,0 +1,105 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the finder module.
+ */
+
+use Drupal\taxonomy\Entity\Vocabulary;
+use Drupal\paragraphs\Entity\ParagraphsType;
+
+/**
+ * Implements hook_install().
+ */
+function finder_install() {
+  $logger = \Drupal::logger('finder');
+  $logger->notice('Starting finder module installation');
+  print "Starting finder module installation...\n";
+
+  // Ensure module dependencies are installed first
+  try {
+    \Drupal::service('module_installer')->install(['hal', 'serialization', 'rest', 'taxonomy', 'paragraphs']);
+    $logger->notice('Successfully installed required modules');
+    print "✓ Required modules installed\n";
+  }
+  catch (\Exception $e) {
+    $message = 'Failed to install required modules: ' . $e->getMessage();
+    $logger->error($message);
+    print "✗ $message\n";
+    throw $e;
+  }
+  
+  // Create the text paragraph type if it doesn't exist
+  try {
+    $paragraph_type = \Drupal::entityTypeManager()
+      ->getStorage('paragraphs_type')
+      ->loadByProperties(['id' => 'text']);
+      
+    if (empty($paragraph_type)) {
+      $paragraph_type = ParagraphsType::create([
+        'id' => 'text',
+        'label' => 'Text',
+        'description' => 'A simple text paragraph type',
+      ]);
+      $paragraph_type->save();
+      $logger->notice('Created text paragraph type');
+      print "✓ Created text paragraph type\n";
+    }
+  }
+  catch (\Exception $e) {
+    $logger->error('Failed to create paragraph type: @message', ['@message' => $e->getMessage()]);
+    print "✗ Failed to create paragraph type: " . $e->getMessage() . "\n";
+    throw $e;
+  }
+
+  // Create vocabularies
+  $vocabularies = [
+    'control_type' => [
+      'name' => 'Control Type',
+      'description' => 'Controls how facet choices can be selected',
+    ],
+    'facets' => [
+      'name' => 'Facets',
+      'description' => 'Facets for the Digital Storage Finder',
+    ],
+  ];
+
+  foreach ($vocabularies as $vid => $vocab_data) {
+    try {
+      $vocabulary = \Drupal::entityTypeManager()
+        ->getStorage('taxonomy_vocabulary')
+        ->loadByProperties(['vid' => $vid]);
+        
+      if (empty($vocabulary)) {
+        $vocabulary = Vocabulary::create([
+          'vid' => $vid,
+          'name' => $vocab_data['name'],
+          'description' => $vocab_data['description'],
+        ]);
+        $vocabulary->save();
+        $logger->notice('Created vocabulary: @name', ['@name' => $vocab_data['name']]);
+        print "✓ Created vocabulary: {$vocab_data['name']}\n";
+      }
+    }
+    catch (\Exception $e) {
+      $logger->error('Failed to create vocabulary @name: @message', [
+        '@name' => $vocab_data['name'],
+        '@message' => $e->getMessage()
+      ]);
+      print "✗ Failed to create vocabulary {$vocab_data['name']}: " . $e->getMessage() . "\n";
+      throw $e;
+    }
+  }
+
+  // Final cache clear
+  try {
+    drupal_flush_all_caches();
+    $logger->notice('Finder module installation completed successfully');
+    print "✓ Installation completed successfully\n";
+  }
+  catch (\Exception $e) {
+    $logger->error('Failed to clear caches: @message', ['@message' => $e->getMessage()]);
+    print "✗ Failed to clear caches: " . $e->getMessage() . "\n";
+    throw $e;
+  }
+}
