@@ -103,3 +103,40 @@ function finder_install() {
     throw $e;
   }
 }
+
+/**
+ * Make taxonomy term description field visible in form display.
+ */
+function finder_update_9001() {
+  // Load the form display for the facets vocabulary.
+  $form_display = \Drupal::entityTypeManager()
+    ->getStorage('entity_form_display')
+    ->load('taxonomy_term.facets.default');
+
+  if ($form_display) {
+    // Get the components
+    $components = $form_display->getComponents();
+
+    // Make sure description is in the components and is visible
+    if (!isset($components['description']) || isset($components['description']['type']) && $components['description']['type'] === 'hidden') {
+      // Add the description field to the form display
+      $form_display->setComponent('description', [
+        'type' => 'text_textarea',
+        'weight' => 1,
+        'settings' => [
+          'rows' => 5,
+          'placeholder' => '',
+        ],
+        'third_party_settings' => [],
+      ])->save();
+
+      return t('Made the description field visible in the facets taxonomy term form.');
+    }
+    else {
+      return t('The description field was already visible in the facets taxonomy term form.');
+    }
+  }
+  else {
+    return t('Could not load the form display for taxonomy_term.facets.default.');
+  }
+}
