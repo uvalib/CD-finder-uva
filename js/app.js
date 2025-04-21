@@ -278,7 +278,9 @@
             chart = chart + help;
             chart = chart +"</th>"; // row title
                 for (var j=0;j<servicelist.length;j++) {
-                    chart = chart + "<td class='service service-"+servicelist[j].id+"' data-label='"+servicelist[0].field_data[field].label+"'>"+servicelist[j].field_data[field].value+"</td>";
+                    var ttext = servicelist[j].field_data[field].value;
+                    if (!ttext) { ttext=""; }
+                    chart = chart + "<td class='service service-"+servicelist[j].id+"' data-label='"+servicelist[0].field_data[field].label+"'>"+ttext+"</td>";
                 }
             chart = chart + "</tr>";
         }
