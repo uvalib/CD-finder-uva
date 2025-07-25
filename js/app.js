@@ -355,7 +355,7 @@
                 comparisonlist = comparisonlist +
                 "<label><input type='checkbox' id='comparison-"+service.id+
                 "' service='.service-"+service.id+"' class='manualcheckbox' checked name='manualcheckbox-"+service.id+"'> "+
-                service.title+"<div class='control-indicator'></div></label>";
+                service.title+"<div class='control-indicator' aria-hidden='true'></div></label>";
             }
 
             var service_count = $('.cardcheckbox:checked').length;
