@@ -427,6 +427,7 @@
       $('html, body').animate({
         scrollTop: $(".comparisonchart-wrapper-wrapper").offset().top
       }, 500);
+      $("#comparisonchart-wrapper").focus();
       $(".jump-to-chart").hide();
     });
 
