@@ -306,13 +306,29 @@
     // utility function to update empty state message visibility
     function updateEmptyStateMessage() {
         var hasSelectedServices = $('.cardcheckbox:checked').length > 0;
+        var hasVisibleServices = $('.manualcheckbox:checked').length > 0;
         
-        if (hasSelectedServices) {
-            // Services are selected, hide empty message, show table
+        // Show table and hide message only if services are selected AND visible in comparison
+        if (hasSelectedServices && hasVisibleServices) {
+            // Services are selected and visible in comparison, hide empty message, show table
             $('#empty-comparison-message').hide();
             $('#comparisonchart').show();
         } else {
-            // No services selected, show empty message, hide table
+            // Either no services selected OR no services visible in comparison
+            var message = '';
+            if (!hasSelectedServices) {
+                message = 'No services selected. Please select services from the list above to compare their features and details.';
+            } else if (!hasVisibleServices) {
+                message = 'No services selected for comparison. Please check one or more services in the "Comparing Services" section below to view the comparison table.';
+            }
+            
+            // Update the message text if it exists
+            var messageElement = $('#empty-comparison-message');
+            if (messageElement.length && message) {
+                // Update the message content while preserving the HTML structure
+                messageElement.find('p').text(message);
+            }
+            
             $('#empty-comparison-message').show();
             $('#comparisonchart').hide();
         }
