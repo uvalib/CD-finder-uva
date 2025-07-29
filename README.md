@@ -1,4 +1,59 @@
-# Finder Module
+# Finder Module (UVA Library Customization)
+
+**ORIGINALLY CREATED BY**: CORNELL DATA MANAGEMENT SERVICE GROUP AND CORNELL INFORMATION TECHNOLOGIES CUSTOM DEVELOPMENT GROUP
+
+**CUSTOMIZED FOR**: UNIVERSITY OF VIRGINIA LIBRARY
+
+This software is being shared free of cost and with no restrictions on re-use or modification. The code is provided "as is" without warranty of any kind, express or implied.
+
+**Original Citation**: Cornell University Research Data Management Service Group and Cornell Information Technologies Custom Development Group (2018). Finder Module. Drupal 8. https://github.com/CU-CommunityApps/CD-finder
+
+**UVA Fork**: This repository is a customized fork maintained by UVA Library at https://github.com/uvalib/CD-finder-uva
+
+## Repository Relationship
+
+This finder module is designed to be used as a **Composer dependency** in Drupal applications. It is **not a standalone Drupal site**.
+
+### Main Application Repository
+
+- **Repository**: `uvalib/drupal-dsf`
+- **Purpose**: Main Drupal application that includes this finder module
+- **Integration**: This module is pulled in via Composer as `uvalib/cd-finder-uva`
+- **Installation Path**: `web/modules/custom/finder/`
+
+### Development Workflow
+
+When working with both repositories:
+
+1. **Make finder module changes**: Work in this repository (`uvalib/CD-finder-uva`)
+2. **Create matching branches**: Use the same branch names in both repositories for feature development
+3. **Update main app dependencies**: Reference the appropriate branch in the main app's `composer.json`
+4. **Test integration**: Run `composer update` in the main application to pull changes
+
+## UVA Library Customizations
+
+This fork includes several UVA Library-specific enhancements:
+
+### Features Added
+
+- **Empty State Messages**: Informative messages when no services are selected for comparison
+- **Share/Save Functionality**: Persistent URLs for sharing search results and selected criteria
+- **Accessibility Improvements**: Enhanced WCAG 2.2 AA compliance with proper ARIA attributes
+- **UI/UX Enhancements**: Improved user interface and user experience modifications
+
+### Key Files Modified
+
+- `js/app.js`: Core JavaScript functionality including empty state management and URL persistence
+- `templates/`: Template files for improved user interface
+- `css/`: Styling enhancements for better visual presentation
+
+### Development Notes
+
+- Changes are maintained in feature branches that match the main application repository
+- JavaScript changes include integration with external results-actions.js for URL management
+- Template modifications support both the original Cornell functionality and UVA enhancements
+
+## OverviewModule
 
 CREATED BY: CORNELL DATA MANAGEMENT SERVICE GROUP AND CORNELL INFORMATION TECHNOLOGIES CUSTOM DEVELOPMENT GROUP
 
