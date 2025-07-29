@@ -315,18 +315,26 @@
             $('#comparisonchart').show();
         } else {
             // Either no services selected OR no services visible in comparison
-            var message = '';
-            if (!hasSelectedServices) {
-                message = 'No services selected. Please select services from the list above to compare their features and details.';
-            } else if (!hasVisibleServices) {
-                message = 'No services selected for comparison. Please check one or more services in the "Comparing Services" section below to view the comparison table.';
-            }
-            
-            // Update the message text if it exists
             var messageElement = $('#empty-comparison-message');
-            if (messageElement.length && message) {
-                // Update the message content while preserving the HTML structure
-                messageElement.find('p').text(message);
+            if (messageElement.length) {
+                var titleText = '';
+                var mainText = '';
+                var helpText = '';
+                
+                if (!hasSelectedServices) {
+                    titleText = 'No services selected for comparison';
+                    mainText = 'Please select one or more services from the list above to view a detailed comparison table.';
+                    helpText = 'Use the checkboxes next to services to add them to your comparison.';
+                } else if (!hasVisibleServices) {
+                    titleText = 'Services selected but not visible';
+                    mainText = 'You have selected services, but none are currently checked for comparison display.';
+                    helpText = 'Check the boxes in this section to show selected services in the comparison table.';
+                }
+                
+                // Update all content elements to avoid duplication and provide accurate context
+                messageElement.find('h4').text(titleText);
+                messageElement.find('p').eq(0).text(mainText);
+                messageElement.find('p').eq(1).find('small').text(helpText);
             }
             
             $('#empty-comparison-message').show();
