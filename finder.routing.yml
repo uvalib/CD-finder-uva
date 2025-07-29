@@ -17,13 +17,14 @@ finder.servicelist:
     _controller: '\Drupal\finder\Controller\FinderController::servicelist'
   requirements:
     _permission: 'access content'
-finder.sendemail:
-  path: '/rest/sendemail'
-  methods: [POST]
-  defaults:
-    _controller: '\Drupal\finder\Controller\FinderController::send_email'
-  requirements:
-    _permission: 'access content'
+# Email functionality has been disabled
+# finder.sendemail:
+#   path: '/rest/sendemail'
+#   methods: [POST]
+#   defaults:
+#     _controller: '\Drupal\finder\Controller\FinderController::send_email'
+#   requirements:
+#     _permission: 'access content'
 finder.configuration:
   path: '/rest/finder_settings'
   defaults:

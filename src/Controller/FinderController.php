@@ -213,7 +213,11 @@ class FinderController extends ControllerBase {
     }
 
     public function send_email() {
-
+        // Email functionality has been disabled for security/policy reasons
+        return new JsonResponse(['error' => 'Email functionality has been disabled'], 403);
+        
+        /*
+        // Original email functionality has been commented out
         if (\Drupal::service('session')->isStarted() === FALSE) {
             return new JsonResponse("no session, so sorry");
         }
@@ -313,6 +317,7 @@ class FinderController extends ControllerBase {
           Drupal::messenger()->addMessage($this->t('Your message has been sent.'));
           return new JsonResponse("success");
         }
+        */
 
     }
 

@@ -106,7 +106,8 @@
         $('#pagequestionheader').html(response.question_header.replace(/(?:\r\n|\r|\n)/g, '<br />'));
         $('#pageserviceheader').html(response.service_header.replace(/(?:\r\n|\r|\n)/g, '<br />'));
         $('#pagechartheader').html(response.chart_header.replace(/(?:\r\n|\r|\n)/g, '<br />'));
-        $('#pageemailformheader').html(response.email_form_header.replace(/(?:\r\n|\r|\n)/g, '<br />'));
+        // Email functionality disabled - replaced with save/share options
+        $('#pageemailformheader').html('Use these options to save, print, or share your selected criteria and results.');
         //$('#pageemailaddress').html(response.data.email_address);
         //$('#pageemailname').html(response.data.email_name);
         //$('#pageemailbody').html(response.email_body.replace(/(?:\r\n|\r|\n)/g, '<br />'));
@@ -302,6 +303,21 @@
 
 
 
+    // utility function to update empty state message visibility
+    function updateEmptyStateMessage() {
+        var hasSelectedServices = $('.cardcheckbox:checked').length > 0;
+        
+        if (hasSelectedServices) {
+            // Services are selected, hide empty message, show table
+            $('#empty-comparison-message').hide();
+            $('#comparisonchart').show();
+        } else {
+            // No services selected, show empty message, hide table
+            $('#empty-comparison-message').show();
+            $('#comparisonchart').hide();
+        }
+    }
+
     // utility function to show or hide services.
     // services have id="service-{{id}}"
 
@@ -386,6 +402,9 @@
             visible_classes.sort();
             $(".service").hide();
             $.each(visible_classes, function (index,service)  {$(service).show(); });
+            
+            // Update empty state message visibility
+            updateEmptyStateMessage();
         });
 
         $('.chart-select-all').click(function() {
@@ -401,18 +420,27 @@
             //show = visible_classes.slice(first_visible,first_visible+columns_to_show);
             show = visible_classes;  // use all of them when scrolling the table.
             $.each(show, function (index,service)  {$(service).show(); });
+            
+            // Update empty state message visibility
+            updateEmptyStateMessage();
         });
 
         $('.chart-select-none').click(function() {
             $('.manualcheckbox').prop("checked", false);
             visible_classes = [];
             $(".service").hide();
+            
+            // Update empty state message visibility
+            updateEmptyStateMessage();
         });
         //psw STSM events
         addEvents();
 
         facetlist = selected.join(","); // list of facets which are "on"
         $("#return").html("<a href='"+document.location.protocol+"//"+document.location.host+"/finder?facets="+facetlist+"'>Return</a>");
+        
+        // Update empty state message visibility
+        updateEmptyStateMessage();
     }
 
     $(document).on("change", ".cardcheckbox",function () {
@@ -449,6 +477,23 @@
             }
         });
         $('.cardcheckbox').prop('checked', false);
+        
+        // Update empty state message visibility
+        updateEmptyStateMessage();
+        
+        // Update browser URL and persistent share link after clearing filters
+        setTimeout(function() {
+            // Call the URL update function from results-actions.js if it's available
+            if (typeof updateBrowserUrl === 'function') {
+                updateBrowserUrl();
+            }
+            // Call the persistent link update function if it's available
+            if (typeof updatePersistentLink === 'function') {
+                updatePersistentLink();
+            }
+            // If functions aren't available globally, trigger a custom event that results-actions.js can listen for
+            $(document).trigger('filtersCleared');
+        }, 100);
     });
 
     $('.btn-select-all').click(function(){
@@ -457,6 +502,20 @@
         $('.jump-to-chart').show();
         $('#container34').show();
         listenForScrollEvent($('#comparisonchart tbody'));
+        
+        // Update browser URL and persistent share link after selecting all
+        setTimeout(function() {
+            // Call the URL update function from results-actions.js if it's available
+            if (typeof updateBrowserUrl === 'function') {
+                updateBrowserUrl();
+            }
+            // Call the persistent link update function if it's available
+            if (typeof updatePersistentLink === 'function') {
+                updatePersistentLink();
+            }
+            // If functions aren't available globally, trigger a custom event that results-actions.js can listen for
+            $(document).trigger('filtersCleared');
+        }, 100);
     });
 
     $('.btn-select-none').click(function(){
@@ -464,14 +523,56 @@
         evaluate_services();
         $('.jump-to-chart').hide();
         $('#container34').hide();  // not sure we want this
+        
+        // Update browser URL and persistent share link after clearing selections
+        setTimeout(function() {
+            // Call the URL update function from results-actions.js if it's available
+            if (typeof updateBrowserUrl === 'function') {
+                updateBrowserUrl();
+            }
+            // Call the persistent link update function if it's available
+            if (typeof updatePersistentLink === 'function') {
+                updatePersistentLink();
+            }
+            // If functions aren't available globally, trigger a custom event that results-actions.js can listen for
+            $(document).trigger('filtersCleared');
+        }, 100);
     });
 
     $('.btn-compare-all-table').click(function(){
         $('.manualcheckbox:visible').prop('checked', true);
+        
+        // Update browser URL and persistent share link after selecting all table items
+        setTimeout(function() {
+            // Call the URL update function from results-actions.js if it's available
+            if (typeof updateBrowserUrl === 'function') {
+                updateBrowserUrl();
+            }
+            // Call the persistent link update function if it's available
+            if (typeof updatePersistentLink === 'function') {
+                updatePersistentLink();
+            }
+            // If functions aren't available globally, trigger a custom event that results-actions.js can listen for
+            $(document).trigger('filtersCleared');
+        }, 100);
     });
 
     $('.btn-clear-all-table').click(function(){
         $('.manualcheckbox:visible').prop('checked', false);
+        
+        // Update browser URL and persistent share link after clearing all table items
+        setTimeout(function() {
+            // Call the URL update function from results-actions.js if it's available
+            if (typeof updateBrowserUrl === 'function') {
+                updateBrowserUrl();
+            }
+            // Call the persistent link update function if it's available
+            if (typeof updatePersistentLink === 'function') {
+                updatePersistentLink();
+            }
+            // If functions aren't available globally, trigger a custom event that results-actions.js can listen for
+            $(document).trigger('filtersCleared');
+        }, 100);
     });
 
     // var stickCompareBar = throttle(function(){
